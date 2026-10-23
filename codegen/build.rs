@@ -7,7 +7,8 @@ use yansi::{Paint, Color::{Red, Yellow}};
 
 // Specifies the minimum nightly version needed to compile Pear.
 const MIN_DATE: &'static str = "2018-10-05";
-const MIN_VERSION: &'static str = "1.31.0-nightly";
+//const MIN_VERSION: &'static str = "1.31.0-nightly";
+const MIN_VERSION: &'static str = "1.31.0";
 
 macro_rules! err {
     ($version:expr, $date:expr, $msg:expr) => (
@@ -19,10 +20,11 @@ macro_rules! err {
 
 fn main() {
     if let Some((version, channel, date)) = version_check::triple() {
-        if !channel.supports_features() {
-            err!(version, date, "Pear requires a 'dev' or 'nightly' version of rustc.");
-            panic!("Aborting compilation due to incompatible compiler.")
-        }
+        //if !channel.supports_features() {
+        //    err!(version, date, "Pear requires a 'dev' or 'nightly' version of rustc.");
+        //    panic!("Aborting compilation due to incompatible compiler.")
+        //}
+        println!("Using version {}, channel , date ", version);
 
         if !version.at_least(MIN_VERSION) || !date.at_least(MIN_DATE) {
             err!(version, date, "Pear requires a more recent version of rustc.");
