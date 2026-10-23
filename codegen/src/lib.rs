@@ -16,6 +16,7 @@ use spanned::Spanned;
 use syn::*;
 use proc_macro2::TokenStream as TokenStream2;
 use proc_macro::TokenStream;
+use proc_macro2_diagnostics::{SpanDiagnosticExt, Diagnostic};
 use syn::visit_mut::{self, VisitMut};
 
 #[derive(Copy, Clone)]

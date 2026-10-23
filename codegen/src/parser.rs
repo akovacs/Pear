@@ -4,50 +4,55 @@ use syn::Token;
 use syn::punctuated::Punctuated;
 use syn::parse::{Parse as SynParse, ParseStream as SynParseStream};
 use proc_macro2::Delimiter;
+use proc_macro2_diagnostics::{SpanDiagnosticExt, Diagnostic};
 use spanned::Spanned;
 
-#[derive(Debug)]
-pub(crate) struct Diagnostic(crate ::proc_macro::Diagnostic);
 
-impl Diagnostic {
-    pub fn emit(self) {
-        self.0.emit();
-    }
-}
-
-impl From<::proc_macro::Diagnostic> for Diagnostic {
-    fn from(original: ::proc_macro::Diagnostic) -> Diagnostic {
-        Diagnostic(original)
-    }
-}
-
-impl From<::syn::parse::Error> for Diagnostic {
-    fn from(e: ::syn::parse::Error) -> Diagnostic {
-        let inner = ::proc_macro::Diagnostic::spanned(
-            e.span().unstable(), ::proc_macro::Level::Error, e.to_string());
-        Diagnostic(inner)
-    }
-}
-
-impl Into<::syn::parse::Error> for Diagnostic {
-    fn into(self) -> ::syn::parse::Error {
-        let span = if self.0.spans().is_empty() {
-            Span::call_site()
-        } else {
-            self.0.spans()[0]
-        };
-
-        ::syn::parse::Error::new(span.into(), self.0.message())
-    }
-}
-
-impl ::std::ops::Deref for Diagnostic {
-    type Target = ::proc_macro::Diagnostic;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
+// Syntax Visibility : pub | pub ( crate ) | pub ( self ) | pub ( super ) | pub ( in SimplePath )
+// pub(in path) makes an item visible within the provided path. path must be a parent module of the item whose visibility is being declared.
+// pub(crate) makes an item visible within the current crate.
+/// #[derive(Debug)]
+/// pub(crate) struct Diagnostic(crate ::proc_macro2::Diagnostic);
+///
+/// impl Diagnostic {
+///     pub fn emit(self) {
+///         self.0.emit();
+///     }
+/// }
+///
+/// impl From<::proc_macro2_diagnostics::Diagnostic> for Diagnostic {
+///     fn from(original: ::proc_macro2_diagnostics::Diagnostic) -> Diagnostic {
+///         Diagnostic(original)
+///     }
+/// }
+///
+/// impl From<::syn::parse::Error> for Diagnostic {
+///     fn from(e: ::syn::parse::Error) -> Diagnostic {
+///         let inner = ::proc_macro2_diagnostics::Diagnostic::spanned(
+///             e.span().unstable(), ::proc_macro::Level::Error, e.to_string());
+///         Diagnostic(inner)
+///     }
+/// }
+///
+/// impl Into<::syn::parse::Error> for Diagnostic {
+///     fn into(self) -> ::syn::parse::Error {
+///         let span = if self.0.spans().is_empty() {
+///             Span::call_site()
+///         } else {
+///             self.0.spans()[0]
+///         };
+///
+///         ::syn::parse::Error::new(span.into(), self.0.message())
+///     }
+/// }
+///
+/// impl ::std::ops::Deref for Diagnostic {
+///     type Target = ::proc_macro2_diagnostics::Diagnostic;
+///
+///     fn deref(&self) -> &Self::Target {
+///         &self.0
+///     }
+/// }
 
 pub(crate) type PResult<T> = Result<T, Diagnostic>;
 
